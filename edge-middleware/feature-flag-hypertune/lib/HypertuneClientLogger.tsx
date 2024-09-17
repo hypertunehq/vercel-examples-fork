@@ -7,7 +7,7 @@ export default function HypertuneClientLogger({
   shouldEvaluateExampleFlag,
 }: {
   shouldEvaluateExampleFlag?: boolean
-}): null {
+}) {
   const hypertune = useHypertune()
 
   useEffect(() => {
