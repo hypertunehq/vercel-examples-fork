@@ -4,14 +4,14 @@ import { useEffect } from 'react'
 import { useHypertune } from '../generated/hypertune.react'
 
 export default function HypertuneClientLogger({
-  shouldLogExampleFlag,
+  shouldEvaluateExampleFlag,
 }: {
-  shouldLogExampleFlag?: boolean
+  shouldEvaluateExampleFlag?: boolean
 }): null {
   const hypertune = useHypertune()
 
   useEffect(() => {
-    if (shouldLogExampleFlag) {
+    if (shouldEvaluateExampleFlag) {
       hypertune.exampleFlag({ fallback: false })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

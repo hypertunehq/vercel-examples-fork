@@ -14,8 +14,8 @@ export default async function ServerComponent() {
       <Text>
         (Server Component) Example Flag: <strong>{String(exampleFlag)}</strong>
       </Text>
-      {/* Ensure we log correct analytics data for events and A/B test exposures. */}
-      <HypertuneClientLogger shouldLogExampleFlag />
+      {/* Log flag analytics on the client. */}
+      <HypertuneClientLogger shouldEvaluateExampleFlag />
 
       <Suspense fallback={null}>
         <VercelFlagValues flagValues={hypertune.get()} />
