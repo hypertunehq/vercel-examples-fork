@@ -21,7 +21,12 @@ export function HypertuneProvider({
   children: React.ReactNode
 }): React.ReactElement {
   return (
-    <HypertuneSourceProvider createSourceOptions={createSourceOptions}>
+    <HypertuneSourceProvider
+      createSourceOptions={{
+        ...createSourceOptions,
+        ...(dehydratedState ?? {}),
+      }}
+    >
       <HypertuneHydrator dehydratedState={dehydratedState}>
         <HypertuneRootProvider rootArgs={rootArgs}>
           {children}
@@ -35,8 +40,13 @@ export function HypertuneProvider({
 
 const HypertuneSourceContext = React.createContext<{
   hypertuneSource: hypertune.SourceNode
-  stateHash: string | null
-}>({ hypertuneSource: hypertune.emptySource, stateHash: null })
+  setOverride: (newOverride: sdk.DeepPartial<hypertune.Source> | null) => void
+}>({
+  hypertuneSource: hypertune.emptySource,
+  setOverride: () => {
+    /* noop */
+  },
+})
 
 export function HypertuneSourceProvider({
   createSourceOptions,
@@ -46,8 +56,8 @@ export function HypertuneSourceProvider({
   children: React.ReactNode
 }): React.ReactElement {
   const hypertuneSource = React.useMemo(
-    () =>
-      hypertune.createSource({
+    () => {
+      return hypertune.createSource({
         initDataProvider: typeof window === 'undefined' ? null : undefined,
         remoteLogging: {
           mode: typeof window === 'undefined' ? 'off' : undefined,
@@ -55,7 +65,8 @@ export function HypertuneSourceProvider({
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         localLogger: typeof window === 'undefined' ? () => {} : undefined,
         ...createSourceOptions,
-      }),
+      })
+    },
     // Don't recreate the source even if createSourceOptions changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -83,9 +94,28 @@ export function HypertuneSourceProvider({
     }
   }, [hypertuneSource, router])
 
+  const hypertuneSourceForStateHash = React.useMemo(() => {
+    const { context } = hypertuneSource.props
+    const newProps = {
+      ...hypertuneSource.props,
+      stateHash,
+      initDataHash: context?.initData?.hash ?? null,
+      expression: context?.initData?.reducedExpression ?? null,
+    }
+    return new hypertune.SourceNode(newProps)
+  }, [hypertuneSource, stateHash])
+
+  const setOverride = React.useCallback(
+    (newOverride: sdk.DeepPartial<hypertune.Source> | null) => {
+      setOverrideCookie(newOverride)
+      router.refresh()
+    },
+    [router]
+  )
+
   const value = React.useMemo(
-    () => ({ hypertuneSource, stateHash }),
-    [hypertuneSource, stateHash]
+    () => ({ hypertuneSource: hypertuneSourceForStateHash, setOverride }),
+    [hypertuneSourceForStateHash, setOverride]
   )
 
   return (
@@ -100,6 +130,13 @@ export function useHypertuneSource(): hypertune.SourceNode {
   return hypertuneSource
 }
 
+export function useSetOverride(): (
+  newOverride: sdk.DeepPartial<hypertune.Source> | null
+) => void {
+  const { setOverride } = React.useContext(HypertuneSourceContext)
+  return setOverride
+}
+
 // Hypertune Root
 
 const HypertuneRootContext = React.createContext(
@@ -109,6 +146,7 @@ const HypertuneRootContext = React.createContext(
     parent: null,
     step: null,
     expression: null,
+    initDataHash: null,
   })
 )
 
@@ -165,4 +203,38 @@ export function HypertuneHydrator({
   }
 
   return children
+}
+
+export function HypertuneClientLogger({
+  flagPaths,
+}: {
+  flagPaths: hypertune.FlagPaths[]
+}): null {
+  const hypertuneRoot = useHypertune()
+  const isReady = hypertuneRoot.isReady()
+
+  React.useEffect(() => {
+    if (!isReady) {
+      return
+    }
+    hypertuneRoot.getFlagValues({
+      flagFallbacks: hypertune.flagFallbacks,
+      flagPaths,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady])
+
+  return null
+}
+
+export const overrideCookieName = 'hypertuneOverride'
+
+function setOverrideCookie(newOverride: any): void {
+  const d = new Date()
+  d.setTime(d.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days
+  let expires = 'expires=' + d.toUTCString()
+
+  document.cookie = `${overrideCookieName}=${JSON.stringify(
+    newOverride
+  )};${expires};path=/`
 }

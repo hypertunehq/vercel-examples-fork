@@ -44,6 +44,23 @@ export const vercelFlagDefinitions = {
   },
 }
 
+export type FlagValues = {
+  exampleFlag: boolean
+}
+
+export type FlagPaths = keyof FlagValues & string
+
+export const flagFallbacks: FlagValues = {
+  exampleFlag: false,
+}
+
+export function decodeFlagValues<TFlagPaths extends keyof FlagValues & string>(
+  encodedValues: string,
+  flagPaths: TFlagPaths[]
+): Pick<FlagValues, TFlagPaths> {
+  return sdk.decodeFlagValues({ flagPaths, encodedValues })
+}
+
 export type Rec = {}
 
 export type Rec3 = {
@@ -200,6 +217,7 @@ export const emptySource = new SourceNode({
   parent: null,
   step: null,
   expression: null,
+  initDataHash: null,
 })
 
 export function createSourceForServerOnly({

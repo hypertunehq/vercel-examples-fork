@@ -4,12 +4,19 @@ import { type FlagOverridesType, encrypt, decrypt } from '@vercel/flags'
 import { FlagValues } from '@vercel/flags/react'
 import { cookies } from 'next/headers'
 import { unstable_flag as flag } from '@vercel/flags/next'
-import { DeepPartial, ObjectValue, Value } from 'hypertune'
+import {
+  getOverrideFromOverridesList,
+  DeepPartial,
+  ObjectValue,
+  Value,
+} from 'hypertune'
 import * as hypertuneTypes from './hypertune'
 import getHypertune from '../lib/getHypertune'
 
 export async function getVercelOverride(): Promise<DeepPartial<hypertuneTypes.Source> | null> {
-  const overridesCookieValue = cookies().get('vercel-flag-overrides')?.value
+  const overridesCookieValue = (await cookies()).get(
+    'vercel-flag-overrides'
+  )?.value
 
   if (!overridesCookieValue) {
     return null
@@ -22,17 +29,12 @@ export async function getVercelOverride(): Promise<DeepPartial<hypertuneTypes.So
     return null
   }
 
-  const root = Object.fromEntries(
-    Object.entries(decryptedOverrides).map(([flagPath, value]) => {
-      const [flagName, ...flagPathSteps] = flagPath.split('.')
-      return [
-        flagName,
-        flagPathSteps.reduce((current, step) => ({ [step]: current }), value),
-      ]
-    })
-  ) as DeepPartial<hypertuneTypes.Root>
-
-  return { root }
+  return getOverrideFromOverridesList(
+    Object.entries(decryptedOverrides) as [
+      flagPath: string,
+      value: Value | null
+    ][]
+  )
 }
 
 export async function VercelFlagValues({
