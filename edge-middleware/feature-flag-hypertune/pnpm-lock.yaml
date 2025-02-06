@@ -21,8 +21,8 @@ importers:
         specifier: ^0.1.18
         version: 0.1.18(next@14.1.4(react-dom@18.2.0(react@18.3.1))(react@18.3.1))(react@18.3.1)
       hypertune:
-        specifier: 2.7.0-alpha.0
-        version: 2.7.0-alpha.0(encoding@0.1.13)
+        specifier: 2.7.0
+        version: 2.7.0(encoding@0.1.13)
       next:
         specifier: ^14.1.4
         version: 14.1.4(react-dom@18.2.0(react@18.3.1))(react@18.3.1)
@@ -116,8 +116,8 @@ packages:
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
 
-  '@hypertune/jsonito@0.0.4':
-    resolution: {integrity: sha512-LyQJbdJsvRzB6vW/pKU+4gc/1WM0N42lFMTWy0x0q4Bx4bffciLOABA/WYuuqjoyN0zLXAaFFZbeMW5+NurXwA==}
+  '@hypertune/jsonito@0.0.5':
+    resolution: {integrity: sha512-ZZJ/cJbDIYqBUngI90BRy8CxLgrcAL0hOEt+mScM02v1oM5b33lHFw4zSF0k5PylsJQBpfWG/v29m34YicmVdA==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -981,8 +981,8 @@ packages:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
 
-  hypertune@2.7.0-alpha.0:
-    resolution: {integrity: sha512-dgXbkULwst15IpaXpBH15NBkD96dbcgP30PJzP2rb+QpnaieANmGefCrFyKWzYEpvBBZr0CNIpj93FNFWd/7MQ==}
+  hypertune@2.7.0:
+    resolution: {integrity: sha512-9i3wqPv18+7Wb3xy8jZh9BPkANbpiN3NQ9SubN7xdYNWVwDBYYF7wH6gZ3Mi0IS8rqGBLIStm1X+CGR9W3yq0A==}
     hasBin: true
 
   iconv-lite@0.6.3:
@@ -1889,7 +1889,7 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.3': {}
 
-  '@hypertune/jsonito@0.0.4': {}
+  '@hypertune/jsonito@0.0.5': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -2876,9 +2876,9 @@ snapshots:
 
   human-signals@2.1.0: {}
 
-  hypertune@2.7.0-alpha.0(encoding@0.1.13):
+  hypertune@2.7.0(encoding@0.1.13):
     dependencies:
-      '@hypertune/jsonito': 0.0.4
+      '@hypertune/jsonito': 0.0.5
       cac: 6.7.14
       core-js: 3.33.0
       cross-fetch: 4.0.0(encoding@0.1.13)
