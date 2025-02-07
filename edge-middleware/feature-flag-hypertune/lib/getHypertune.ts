@@ -9,6 +9,7 @@ import { getVercelOverride } from '../generated/hypertune.vercel'
 
 const hypertuneSource = createSource({
   token: process.env.NEXT_PUBLIC_HYPERTUNE_TOKEN!,
+  remoteLogging: { mode: 'off' },
   initDataProvider:
     process.env.EDGE_CONFIG && process.env.EDGE_CONFIG_HYPERTUNE_ITEM_KEY
       ? new VercelEdgeConfigInitDataProvider({
